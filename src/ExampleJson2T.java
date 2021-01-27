@@ -90,6 +90,11 @@ public class ExampleJson2T {
         //tương tự như trên nếu là mảng số có thể ép nhanh .toInts() .toDoubles() 
         //nếu là mảng trộn nhiều loại vd: [1, "a", {"c": 5}, 12.5] sử dụng .toObjs();
         //là mảng đối tượng cũng sử dụng .toObjs() như VD4 cách 2
+        
+        //VD7
+        //lấy độ dài của mảng workDone
+        int lengthWorkDone = json2T.key("workDone").length;
+        System.out.println("length workDone: "+lengthWorkDone);
     }
 
 }
