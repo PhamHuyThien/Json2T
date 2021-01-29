@@ -4,23 +4,24 @@
 
 ### Constructor
 - (String json): void -> json là chuỗi json cần parse
-- (Object object): void -> object được parse từ JSONValue.parse(String json)
-
-### Variable
-- length: int -> độ dài của mảng (áp dụng với mảng nếu là đối tượng trả về -1)
+- (Object object): void -> object được parse từ JSONValue.parse(String json): Object
 
 ### Method
+
+### Static Method:
+- parse(String json): Json2T -> json là chuỗi json cần parse
+- parse(Object object): Json2T -> object được parse từ JSONValue.parse(String json): Object
 
 #### Callback:
 - key(String key): Json2T -> key là key muốn get value trong json
 - index(int index): Json2T -> vị trí muốn lấy trong 1 mảng
 
 #### Lấy giá trị:
-- toJsonString(): String -> trả về json
-- toStr(): String -> trả về chuỗi value
-- toObj(): Object -> lấy object value 
+- toStr(): String -> trả về chuỗi giá trị
+- toObj(): Object -> lấy object giá trị
 - toInt(): int -> trả về giá trị kiểu int (không thể ép kiểu trả về -1)
 - toDouble(): double -> trả về giá trị kiểu double (không thể ép kiểu trả về -1)
+- length(): int -> lấy độ dài của mảng, trả về -1 nếu là Object hoặc Null
 
 #### Lấy mảng giá trị:
 - toPairObjs(): Json2T[][] -> trả về mảng 2 chiều trong đó [i][0] lày key, và [i][1] là value
@@ -38,6 +39,11 @@
 
 ## Cập nhật:
 
+#### v1.0.2:
+- bỏ variable length:int thay bằng function length():int 
+- bỏ toJsonStr() (sử dụng toStr() hoặc toString() thay thế)
+- cập nhật lại source
+
 #### v1.0.1:
 - thêm biến length: int để kiểm tra độ dài mảng
 - fix lại 1 số hàm cho gọn nhẹ
@@ -47,7 +53,7 @@
 
 ## Thông tin:
 - Tên: Json2T
-- Tác giả: Phạm Huy Thiên - Thiên Đẹp Zaii ( SystemError )
-- Phiên bản: 1.0.1
+- Tác giả: Thiên Đẹp Zaii ( SystemError )
+- Phiên bản: 1.0.2
 - Thư viện sử dụng: JSON SIMPLE
 - Phiên bản thư viện: 1.1.1

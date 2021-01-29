@@ -93,8 +93,9 @@ public class ExampleJson2T {
         
         //VD7
         //lấy độ dài của mảng workDone
-        int lengthWorkDone = json2T.key("workDone").length;
+        int lengthWorkDone = json2T.key("workDone").length();
         System.out.println("length workDone: "+lengthWorkDone);
+        
     }
 
 }

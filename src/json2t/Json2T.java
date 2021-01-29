@@ -9,12 +9,10 @@ import org.json.simple.JSONValue;
 /*
     @Name       :   Json2T
     @Author     :   ThienDepTraii
-    @Version    :   1.0.0
+    @Version    :   1.0.2
  */
-
 public class Json2T {
-    
-    public final int length;
+
     private final Object obj;
 
     //
@@ -29,29 +27,26 @@ public class Json2T {
     //
     public Json2T(Object object) {
         this.obj = object;
-        length = isInstanceOfJsonArray() ? ((JSONArray) this.obj).size() : -1;
     }
 
     public Json2T(String json) {
-        json = json.replaceAll("\\n\\b\\t\\s", "");
         obj = JSONValue.parse(json);
-        length = isInstanceOfJsonArray() ? ((JSONArray) this.obj).size() : -1;
     }
 
     //
     public Json2T key(String key) {
-        JSONObject jsonObj = isInstanceOfJsonObject() ? (JSONObject) this.obj : null;
+        JSONObject jsonObj = toJsonObject(this.obj);
         return new Json2T(jsonObj != null ? jsonObj.get(key) : null);
     }
 
     public Json2T index(int index) {
-        JSONArray jsonArray = isInstanceOfJsonArray() ? (JSONArray) this.obj : null;
+        JSONArray jsonArray = toJsonArray(this.obj);
         return new Json2T(jsonArray != null ? jsonArray.get(index) : null);
     }
-    
+
     //
     public Json2T[][] toPairObjs() {
-        JSONObject jsonObject = isInstanceOfJsonObject() ? (JSONObject) this.obj : null;
+        JSONObject jsonObject = toJsonObject(this.obj);
         if (jsonObject == null) {
             return null;
         }
@@ -68,7 +63,7 @@ public class Json2T {
 
     //
     public Json2T[] toObjs() {
-        JSONArray jsonArray = isInstanceOfJsonArray() ? (JSONArray) obj : null;
+        JSONArray jsonArray = toJsonArray(this.obj);
         if (jsonArray == null) {
             return null;
         }
@@ -81,7 +76,7 @@ public class Json2T {
 
     //
     public String[] toStrs() {
-        JSONArray jsonArray = isInstanceOfJsonArray() ? (JSONArray) obj : null;
+        JSONArray jsonArray = toJsonArray(this.obj);
         if (jsonArray == null) {
             return null;
         }
@@ -93,7 +88,7 @@ public class Json2T {
     }
 
     public int[] toInts() {
-        JSONArray jsonArray = isInstanceOfJsonObject() ? (JSONArray) obj : null;
+        JSONArray jsonArray = toJsonArray(this.obj);
         if (jsonArray == null) {
             return null;
         }
@@ -110,7 +105,7 @@ public class Json2T {
     }
 
     public double[] toDoubles() {
-        JSONArray jsonArray = isInstanceOfJsonObject() ? (JSONArray) obj : null;
+        JSONArray jsonArray = toJsonArray(this.obj);
         if (jsonArray == null) {
             return null;
         }
@@ -127,10 +122,6 @@ public class Json2T {
     }
 
     //
-    public String toJsonStr() {
-        return isInstanceOfJsonObject() ? ((JSONObject) obj).toJSONString() : obj.toString();
-    }
-
     public String toStr() {
         return this.obj == null ? null : this.obj.toString();
     }
@@ -154,12 +145,28 @@ public class Json2T {
             return -1;
         }
     }
-    //
-    private boolean isInstanceOfJsonObject() {
-        return this.obj == null ? false : this.obj instanceof JSONObject;
+
+    public int length() {
+        int lengthObject = isInstanceOfJsonObject(this.obj) ? toJsonObject(this.obj).size() : -1;
+        int lengthArray = isInstanceOfJsonArray(this.obj) ? toJsonArray(this.obj).size() : -1;
+        return lengthArray > lengthObject ? lengthArray : lengthObject;
     }
 
-    private boolean isInstanceOfJsonArray() {
-        return this.obj == null ? false : this.obj instanceof JSONArray;
+    //
+    private static JSONObject toJsonObject(Object object) {
+        return isInstanceOfJsonObject(object) ? (JSONObject) object : null;
+    }
+
+    private static JSONArray toJsonArray(Object object) {
+        return isInstanceOfJsonArray(object) ? (JSONArray) object : null;
+    }
+
+    //
+    private static boolean isInstanceOfJsonObject(Object object) {
+        return object == null ? false : object instanceof JSONObject;
+    }
+
+    private static boolean isInstanceOfJsonArray(Object object) {
+        return object == null ? false : object instanceof JSONArray;
     }
 }
