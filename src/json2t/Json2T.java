@@ -1,7 +1,10 @@
 package json2t;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -9,8 +12,9 @@ import org.json.simple.JSONValue;
 /*
     @Name       :   Json2T
     @Author     :   ThienDepTraii
-    @Version    :   1.0.2
+    @Version    :   1.0.3
  */
+
 public class Json2T {
 
     private final Object obj;
@@ -34,14 +38,45 @@ public class Json2T {
     }
 
     //
-    public Json2T key(String key) {
+    public Json2T k(String key) {
         JSONObject jsonObj = toJsonObject(this.obj);
         return new Json2T(jsonObj != null ? jsonObj.get(key) : null);
     }
 
-    public Json2T index(int index) {
+    public Json2T i(int index) {
         JSONArray jsonArray = toJsonArray(this.obj);
         return new Json2T(jsonArray != null ? jsonArray.get(index) : null);
+    }
+
+    public Json2T q(String query) {
+        //query hợp lệ
+        final Object objectNull = null;
+        if (stringRegex("^(\\.\\w+(\\[\\d\\])*)+$", query)==null) {
+            return new Json2T(objectNull);
+        }
+        String[] querys = query.split("\\.");
+        Object objTmp = this.obj;
+        //đầu vào hợp lệ
+        if (objTmp == null) {
+            return this;
+        }
+        for (int i = 1; i < querys.length; i++) {
+            String q = querys[i];
+            if (q.contains("[")) { // of array
+                String name = stringRegex("^(\\w+)\\[", q)[0]; // lấy tên
+                objTmp = toJsonObject(objTmp).get(name.replace("[", "")); //đọc object xong mấy lấy index
+                String[] strIndexs = stringRegex("\\[(\\d+)\\]+", q);
+                for(String strIndex: strIndexs){
+                    int index = Integer.parseInt(strIndex.replace("[", "").replace("]", ""));
+                    JSONArray jsonArrayTmp = toJsonArray(objTmp);
+                    objTmp = jsonArrayTmp != null ? jsonArrayTmp.get(index) : null;
+                }
+            } else { //of object
+                JSONObject jsonObjectTmp = toJsonObject(objTmp);
+                objTmp = jsonObjectTmp != null ? jsonObjectTmp.get(q) : null;
+            }
+        }
+        return new Json2T(objTmp);
     }
 
     //
@@ -168,5 +203,21 @@ public class Json2T {
 
     private static boolean isInstanceOfJsonArray(Object object) {
         return object == null ? false : object instanceof JSONArray;
+    }
+
+    //
+    public static String[] stringRegex(String regex, String input) {
+        Pattern p = Pattern.compile(regex);
+        Matcher m = p.matcher(input);
+
+        ArrayList<String> alMatch = new ArrayList<>();
+        while (m.find()) {
+            alMatch.add(m.group());
+        }
+        String[] matchs = new String[alMatch.size()];
+        for (int i = 0; i < matchs.length; i++) {
+            matchs[i] = alMatch.get(i);
+        }
+        return matchs.length == 0 ? null : matchs;
     }
 }

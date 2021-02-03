@@ -8,13 +8,14 @@
 
 ### Method
 
-### Static Method:
+#### Static Method:
 - parse(String json): Json2T -> json là chuỗi json cần parse
 - parse(Object object): Json2T -> object được parse từ JSONValue.parse(String json): Object
 
 #### Callback:
-- key(String key): Json2T -> key là key muốn get value trong json
-- index(int index): Json2T -> vị trí muốn lấy trong 1 mảng
+- k(String key): Json2T -> key là key muốn get value trong json
+- i(int index): Json2T -> vị trí muốn lấy trong 1 mảng
+- q(String query): Json2T -> đọc json nhanh như javascript (bắt buộc có dấu (.) đầu tiên)
 
 #### Lấy giá trị:
 - toStr(): String -> trả về chuỗi giá trị
@@ -35,9 +36,16 @@
 - xem ExampleJson2T.java trong src
 
 ## Lưu ý:
+- tốc độ code và đọc dữ liệu thì q(String query):Json2T nhanh hơn dùng k(String query):Json2T và i(String query):Json2T
 - không tìm thấy key hoặc index sẽ trả về Null
+- bất cứ lỗi nào sảy ra sẽ trả về Null
 
 ## Cập nhật:
+
+#### v1.0.3:
+- thêm function q: Json2T => đọc json nhanh hơn người yêu cũ trở mặt
+- đổi function key(String key): Json2T => k(String key): Json2T
+- đổi function index(String index): Json2T => i(String index): Json2T
 
 #### v1.0.2:
 - bỏ variable length:int thay bằng function length():int 
@@ -54,6 +62,6 @@
 ## Thông tin:
 - Tên: Json2T
 - Tác giả: Thiên Đẹp Zaii ( SystemError )
-- Phiên bản: 1.0.2
+- Phiên bản: 1.0.3
 - Thư viện sử dụng: JSON SIMPLE
 - Phiên bản thư viện: 1.1.1

@@ -43,47 +43,56 @@ public class ExampleJson2T {
         //c2: Json2T json2T = Json2T.parse(json);
         //cả 2 đều trả về Json2T, nhưng mình sẽ chọn cách 2 vì nó cho chúng ta tiết kiệm dòng code
         Json2T json2T = Json2T.parse(json);
-        
         //VD1
         //để lấy firstname chúng ta làm như sau:
-        String firstName = json2T.key("firstName").toStr();
+        //String firstName = json2T.k("firstName").toStr();
+        String firstName = json2T.q(".firstName").toStr();
         System.out.println("firstName: " + firstName);
         //vì firstName dạng chuỗi lên ta cần toStr()
         
         //VD2
-        int age = json2T.key("age").toInt();
+        //int age = json2T.k("age").toInt();
+        int age = json2T.q(".age").toInt();
         System.out.println("Age: " + age);
         //nếu là dạng số chúng ta có thể ép kiểu nhanh .toInt() hoặc .toDouble()
         
         //VD3
         //dể lấy dữ liệu postalCode hoặc city trong address ta cần làm như sau:
-        String city = json2T.key("address").key("city").toStr();
-        int postalCode = json2T.key("address").key("postalCode").toInt();
+        //String city = json2T.k("address").k("city").toStr();
+        String city = json2T.q(".address.city").toStr();
+        //int postalCode = json2T.k("address").k("postalCode").toInt();
+        int postalCode = json2T.q(".address.postalCode").toInt();
         System.out.println("city: " + city + ", postalCode: " + postalCode);
         //các phần tử trong andress cũng làm tương tự 
         
         //VD4
         //để lấy được số điện thoại ta có 2 cách sau:
         //cách 1: biết được vị trí cần lấy
-        String typeNumber1 = json2T.key("phoneNumbers").index(0).key("type").toStr();
-        String phoneNumber1 = json2T.key("phoneNumbers").index(0).key("number").toStr();
+        //String typeNumber1 = json2T.k("phoneNumbers").i(0).k("type").toStr();
+        String typeNumber1 = json2T.q(".phoneNumbers[0].type").toStr();
+        //String phoneNumber1 = json2T.k("phoneNumbers").i(0).k("number").toStr();
+        String phoneNumber1 = json2T.q(".phoneNumbers[0].number").toStr();
         System.out.println("type: " + typeNumber1 + ", number: " + phoneNumber1);
         //cách 2: cần lấy cả mảng để làm gì đó
-        Json2T[] phoneNumbers = json2T.key("phoneNumbers").toObjs();
+        Json2T[] phoneNumbers = json2T.k("phoneNumbers").toObjs();
         for (Json2T phoneNumber : phoneNumbers) {
-            String typeNumber2 = phoneNumber.key("type").toStr();
-            String phoneNumber2 = phoneNumber.key("number").toStr();
+            //String typeNumber2 = phoneNumber.k("type").toStr();
+            String typeNumber2 = phoneNumber.q(".type").toStr();
+            //String phoneNumber2 = phoneNumber.k("number").toStr();
+            String phoneNumber2 = phoneNumber.q(".number").toStr();
             System.out.println("type: " + typeNumber2 + ", number: " + phoneNumber2);
         }
         
         //VD5
         //lấy salary
-        double salary = json2T.key("salary").toDouble();
+        //double salary = json2T.k("salary").toDouble();
+        double salary = json2T.q(".salary").toDouble();
         System.out.println("Salary: "+salary);
         
         //VD6
         //lấy danh sách workDone
-        String[] workDones = json2T.key("workDone").toStrs();
+        //String[] workDones = json2T.k("workDone").toStrs();
+        String[] workDones = json2T.q(".workDone").toStrs();
         for (String workDone : workDones) {
             System.out.println("workDone: " + workDone);
         }
@@ -93,7 +102,8 @@ public class ExampleJson2T {
         
         //VD7
         //lấy độ dài của mảng workDone
-        int lengthWorkDone = json2T.key("workDone").length();
+        //int lengthWorkDone = json2T.k("workDone").length();
+        int lengthWorkDone = json2T.q(".workDone").length();
         System.out.println("length workDone: "+lengthWorkDone);
         
     }
