@@ -12,7 +12,7 @@ import org.json.simple.JSONValue;
 /*
     @Name       :   Json2T
     @Author     :   ThienDepTraii
-    @Version    :   1.0.3
+    @Version    :   1.0.3.1
  */
 
 public class Json2T {
@@ -49,24 +49,29 @@ public class Json2T {
     }
 
     public Json2T q(String query) {
-        //query hợp lệ
         final Object objectNull = null;
-        if (stringRegex("^(\\.\\w+(\\[\\d\\])*)+$", query)==null) {
-            return new Json2T(objectNull);
-        }
-        String[] querys = query.split("\\.");
         Object objTmp = this.obj;
         //đầu vào hợp lệ
         if (objTmp == null) {
             return this;
         }
-        for (int i = 1; i < querys.length; i++) {
-            String q = querys[i];
+        //query hợp lệ
+        if (stringRegex("^((\\.\\w+(\\[\\d+\\])*)|((\\[\\d+\\])*))+$", query) == null) {
+            return new Json2T(objectNull);
+        }
+        String[] querys = query.split("\\.");
+        for (String q : querys) {
+            if(q.equals("")){
+                continue;
+            }
             if (q.contains("[")) { // of array
-                String name = stringRegex("^(\\w+)\\[", q)[0]; // lấy tên
-                objTmp = toJsonObject(objTmp).get(name.replace("[", "")); //đọc object xong mấy lấy index
+                if (!q.startsWith("[")) { //có name thì truy cập
+                    String[] names = stringRegex("^(\\w+)\\[", q); // lấy tên
+                    String name = names[0].replace("[", "");
+                    objTmp = toJsonObject(objTmp).get(name); //đọc object xong mấy lấy index
+                }
                 String[] strIndexs = stringRegex("\\[(\\d+)\\]+", q);
-                for(String strIndex: strIndexs){
+                for (String strIndex : strIndexs) {
                     int index = Integer.parseInt(strIndex.replace("[", "").replace("]", ""));
                     JSONArray jsonArrayTmp = toJsonArray(objTmp);
                     objTmp = jsonArrayTmp != null ? jsonArrayTmp.get(index) : null;

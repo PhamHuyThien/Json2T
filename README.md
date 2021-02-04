@@ -15,7 +15,7 @@
 #### Callback:
 - k(String key): Json2T -> key là key muốn get value trong json
 - i(int index): Json2T -> vị trí muốn lấy trong 1 mảng
-- q(String query): Json2T -> đọc json nhanh như javascript (bắt buộc có dấu (.) đầu tiên)
+- q(String query): Json2T -> đọc json nhanh như javascript
 
 #### Lấy giá trị:
 - toStr(): String -> trả về chuỗi giá trị
@@ -36,16 +36,19 @@
 - xem ExampleJson2T.java trong src
 
 ## Lưu ý:
-- tốc độ code và đọc dữ liệu thì q(String query):Json2T nhanh hơn dùng k(String query):Json2T và i(String query):Json2T
+- tốc độ code và đọc dữ liệu thì q(String query) nhanh hơn dùng k(String query) và i(String query)
 - không tìm thấy key hoặc index sẽ trả về Null
 - bất cứ lỗi nào sảy ra sẽ trả về Null
 
 ## Cập nhật:
 
+#### v1.0.3.1:
+- fix lại function q(String query):Json2T đọc mảng đầu không lỗi
+
 #### v1.0.3:
-- thêm function q: Json2T => đọc json nhanh hơn người yêu cũ trở mặt
-- đổi function key(String key): Json2T => k(String key): Json2T
-- đổi function index(String index): Json2T => i(String index): Json2T
+- thêm function q(String query):Json2T => đọc json nhanh hơn người yêu cũ trở mặt
+- đổi function key(String key):Json2T => k(String key):Json2T
+- đổi function index(String index): Json2T => i(String index):Json2T
 
 #### v1.0.2:
 - bỏ variable length:int thay bằng function length():int 
