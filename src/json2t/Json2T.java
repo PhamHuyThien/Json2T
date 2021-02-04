@@ -12,7 +12,8 @@ import org.json.simple.JSONValue;
 /*
     @Name       :   Json2T
     @Author     :   ThienDepTraii
-    @Version    :   1.0.3.1
+    @Version    :   1.0.4
+    @Library    :   JsonSimple V1.1.1
  */
 
 public class Json2T {
@@ -61,7 +62,7 @@ public class Json2T {
         }
         String[] querys = query.split("\\.");
         for (String q : querys) {
-            if(q.equals("")){
+            if (q.equals("")) {
                 continue;
             }
             if (q.contains("[")) { // of array
@@ -72,7 +73,7 @@ public class Json2T {
                 }
                 String[] strIndexs = stringRegex("\\[(\\d+)\\]+", q);
                 for (String strIndex : strIndexs) {
-                    int index = Integer.parseInt(strIndex.replace("[", "").replace("]", ""));
+                    int index = Integer.parseInt(strIndex.substring(1, strIndex.length()-1));
                     JSONArray jsonArrayTmp = toJsonArray(objTmp);
                     objTmp = jsonArrayTmp != null ? jsonArrayTmp.get(index) : null;
                 }
@@ -101,6 +102,32 @@ public class Json2T {
         return jsonSimpleses;
     }
 
+    public String[] toKeys() {
+        Json2T[][] json2Tses = toPairObjs();
+        if (json2Tses == null) {
+            return null;
+        }
+        String[] keys = new String[json2Tses.length];
+        int i = 0;
+        for (Json2T[] json2T : json2Tses) {
+            keys[i++] = json2T[0].toStr();
+        }
+        return keys;
+    }
+
+    public Json2T[] toValues() {
+        Json2T[][] json2Tses = toPairObjs();
+        if (json2Tses == null) {
+            return null;
+        }
+        Json2T[] values = new Json2T[json2Tses.length];
+        int i = 0;
+        for (Json2T[] json2T : json2Tses) {
+            values[i++] = json2T[1];
+        }
+        return values;
+    }
+
     //
     public Json2T[] toObjs() {
         JSONArray jsonArray = toJsonArray(this.obj);
@@ -127,6 +154,23 @@ public class Json2T {
         return strings;
     }
 
+    public char[] toChars() {
+        JSONArray jsonArray = toJsonArray(this.obj);
+        if (jsonArray == null) {
+            return null;
+        }
+        char[] chars = new char[jsonArray.size()];
+        for (int i = 0; i < jsonArray.size(); i++) {
+            char charr = '_';
+            try {
+                charr = jsonArray.get(i).toString().toCharArray()[0];
+            } catch (ArrayIndexOutOfBoundsException e) {
+            }
+            chars[i] = charr;
+        }
+        return chars;
+    }
+
     public int[] toInts() {
         JSONArray jsonArray = toJsonArray(this.obj);
         if (jsonArray == null) {
@@ -142,6 +186,23 @@ public class Json2T {
             ints[i] = intt;
         }
         return ints;
+    }
+
+    public long[] toLongs() {
+        JSONArray jsonArray = toJsonArray(this.obj);
+        if (jsonArray == null) {
+            return null;
+        }
+        long[] longs = new long[jsonArray.size()];
+        for (int i = 0; i < jsonArray.size(); i++) {
+            long longg = -1;
+            try {
+                longg = Long.parseLong(jsonArray.get(i).toString());
+            } catch (NumberFormatException e) {
+            }
+            longs[i] = longg;
+        }
+        return longs;
     }
 
     public double[] toDoubles() {
@@ -161,13 +222,38 @@ public class Json2T {
         return doubles;
     }
 
-    //
+    public float[] toFloats() {
+        JSONArray jsonArray = toJsonArray(this.obj);
+        if (jsonArray == null) {
+            return null;
+        }
+        float[] floats = new float[jsonArray.size()];
+        for (int i = 0; i < jsonArray.size(); i++) {
+            float floatt = -1;
+            try {
+                floatt = Float.parseFloat(jsonArray.get(i).toString());
+            } catch (NumberFormatException e) {
+            }
+            floats[i] = floatt;
+        }
+        return floats;
+    }
+
+    //    
+    public Object toObj() {
+        return this.obj;
+    }
+
     public String toStr() {
         return this.obj == null ? null : this.obj.toString();
     }
 
-    public Object toObj() {
-        return this.obj;
+    public char toChar() {
+        try {
+            return this.obj.toString().toCharArray()[0];
+        } catch (ArrayIndexOutOfBoundsException | NullPointerException e) {
+            return '_';
+        }
     }
 
     public int toInt() {
@@ -178,9 +264,25 @@ public class Json2T {
         }
     }
 
+    public long toLong() {
+        try {
+            return Long.parseLong(this.obj.toString());
+        } catch (NumberFormatException | NullPointerException e) {
+            return -1;
+        }
+    }
+
     public double toDouble() {
         try {
             return Double.parseDouble(this.obj.toString());
+        } catch (NumberFormatException | NullPointerException e) {
+            return -1;
+        }
+    }
+
+    public float toFloat() {
+        try {
+            return Float.parseFloat(this.obj.toString());
         } catch (NumberFormatException | NullPointerException e) {
             return -1;
         }
@@ -211,7 +313,7 @@ public class Json2T {
     }
 
     //
-    public static String[] stringRegex(String regex, String input) {
+    private static String[] stringRegex(String regex, String input) {
         Pattern p = Pattern.compile(regex);
         Matcher m = p.matcher(input);
 
