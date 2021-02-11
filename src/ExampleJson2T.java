@@ -106,6 +106,7 @@ public class ExampleJson2T {
         int lengthWorkDone = json2T.q(".workDone").length();
         System.out.println("length workDone: " + lengthWorkDone);
 
+        System.out.println("\n\n");
         //đến với ví dụ mảng
         json = "[\n"
                 + "   [\n"
@@ -141,6 +142,7 @@ public class ExampleJson2T {
         int index2 = json2T.q("[3]").toInt();
         System.out.println("index3: " + index2);
 
+        System.out.println("\n\n");
         //
         json = "{\n"
                 + "   \"mix\":[\n"
@@ -177,6 +179,37 @@ public class ExampleJson2T {
         System.out.println("Tổng: " + sum);
         //trung bình cộng
         float avg = json2T.q(".mix").avg().toFloat();
+        System.out.println("Trung bình cộng: " + avg);
+
+        System.out.println("\n\n");
+        //sử lý vs chuỗi
+        json = "{\n"
+                + "   \"mix\":[\n"
+                + "      \"thiendepzaii\",\n"
+                + "      \"999\",\n"
+                + "      \"1\",\n"
+                + "      \"-500\",\n"
+                + "      \"iuthom\"\n"
+                + "   ]\n"
+                + "}";
+        json2T = Json2T.parse(json);
+        //số lớn nhất
+        max = json2T.q(".mix").max().toInt();
+        System.out.println("Số lớn nhất: " + max);
+        //số nhỏ nhất
+        min = json2T.q(".mix").min().toInt();
+        System.out.println("Số nhỏ nhất: " + min);
+        //sắp xếp mảng
+        String[] sortStr = json2T.q(".mix").sort().toStrs();
+        System.out.println("sắp xếp tăng dần: " + Arrays.toString(sortStr));
+        //sắp xếp giảm dần
+        String[] sortReverseStr = json2T.q(".mix").sort().reverse().toStrs();
+        System.out.println("sắp xếp giảm dần: " + Arrays.toString(sortReverseStr));
+        //tổng 
+        sum = json2T.q(".mix").sum().toInt();
+        System.out.println("Tổng: " + sum);
+        //trung bình cộng
+        avg = json2T.q(".mix").avg().toFloat();
         System.out.println("Trung bình cộng: " + avg);
     }
 

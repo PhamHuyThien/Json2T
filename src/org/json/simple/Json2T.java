@@ -10,18 +10,44 @@ import java.util.regex.Pattern;
 /*
     @Name       :   Json2T
     @Author     :   ThienDepTraii
-    @Version    :   1.0.5
+    @Version    :   1.0.6
     @Library    :   JsonSimple V1.1.1
  */
-public class Json2T {
+public class Json2T implements Comparable<Json2T> {
 
     private final Object obj;
 
-    //
+    /**
+     * parse chuỗi json cần đọc.
+     *
+     * @param json chuỗi json cần dc parse
+     *
+     * @return Trả về Json2T
+     *
+     * @throws
+     *
+     * @see org.json.simple.Json2T
+     *
+     * @since 1.0.5.1
+     */
     public static Json2T parse(String json) {
         return new Json2T(json);
     }
 
+    /**
+     * parse object json cần đọc.
+     *
+     * @param object object json cần dc parse lấy từ JSONValue.parse(String
+     * json): Object
+     *
+     * @return Trả về Json2T
+     *
+     * @throws
+     *
+     * @see org.json.simple.Json2T
+     *
+     * @since 1.0.5.1
+     */
     public static Json2T parse(Object object) {
         return new Json2T(object);
     }
@@ -35,17 +61,55 @@ public class Json2T {
         obj = JSONValue.parse(json);
     }
 
-    //
+    /**
+     * truy cập đến đối tượng trong mảng.
+     *
+     * @param key chuỗi tên của đối tượng cần truy cập
+     *
+     * @return Trả về đối tượng Json2T
+     *
+     * @throws
+     *
+     * @see org.json.simple.Json2T
+     *
+     * @since 1.0.5.1
+     */
     public Json2T k(String key) {
         JSONObject jsonObj = toJsonObject(this.obj);
         return new Json2T(jsonObj != null ? jsonObj.get(key) : null);
     }
 
+    /**
+     * truy cập đến vị trí trong mảng.
+     *
+     * @param index int index cần lấy trong mảng cần truy cập
+     *
+     * @return Trả về đối tượng Json2T
+     *
+     * @throws
+     *
+     * @see org.json.simple.Json2T
+     *
+     * @since 1.0.5.1
+     */
     public Json2T i(int index) {
         JSONArray jsonArray = toJsonArray(this.obj);
         return new Json2T(jsonArray != null ? jsonArray.get(index) : null);
     }
 
+    /**
+     * truy cập đến object như javascript.
+     *
+     * @param query Chuỗi cần truy cập như object như javascript
+     *
+     * @return Trả về đối tượng Json2T
+     *
+     * @throws
+     *
+     * @see org.json.simple.Json2T
+     *
+     * @since 1.0.5.1
+     */
     public Json2T q(String query) {
         Object objTmp = this.obj;
         //đầu vào hợp lệ
@@ -81,6 +145,19 @@ public class Json2T {
         return new Json2T(objTmp);
     }
 
+    /**
+     * Lấy số nhỏ nhất trong mảng.
+     *
+     * @param
+     *
+     * @return Trả về đối tượng Json2T
+     *
+     * @throws
+     *
+     * @see org.json.simple.Json2T
+     *
+     * @since 1.0.5.1
+     */
     public Json2T min() {
         float[] fls = toFloats();
         if (fls == null) {
@@ -90,6 +167,19 @@ public class Json2T {
         return new Json2T((Object) fls[0]);
     }
 
+    /**
+     * Lấy số lớn nhất trong mảng.
+     *
+     * @param
+     *
+     * @return Trả về đối tượng Json2T
+     *
+     * @throws
+     *
+     * @see org.json.simple.Json2T
+     *
+     * @since 1.0.5.1
+     */
     public Json2T max() {
         float[] fls = toFloats();
         if (fls == null) {
@@ -99,6 +189,19 @@ public class Json2T {
         return new Json2T((Object) fls[fls.length - 1]);
     }
 
+    /**
+     * Tính tổng trong mảng.
+     *
+     * @param
+     *
+     * @return Trả về đối tượng Json2T
+     *
+     * @throws
+     *
+     * @see org.json.simple.Json2T
+     *
+     * @since 1.0.5.1
+     */
     public Json2T sum() {
         float[] fls = toFloats();
         if (fls == null) {
@@ -107,6 +210,19 @@ public class Json2T {
         return new Json2T((Object) sumFloat(fls));
     }
 
+    /**
+     * Tính trung bình cộng của mảng.
+     *
+     * @param
+     *
+     * @return Trả về đối tượng Json2T
+     *
+     * @throws
+     *
+     * @see org.json.simple.Json2T
+     *
+     * @since 1.0.5.1
+     */
     public Json2T avg() {
         float[] fls = toFloats();
         if (fls == null) {
@@ -115,30 +231,65 @@ public class Json2T {
         return new Json2T((Object) (sumFloat(fls) / fls.length));
     }
 
+    /**
+     * Sắp xếp mảng tăng dần.
+     *
+     * @param
+     *
+     * @return Trả về đối tượng Json2T
+     *
+     * @throws
+     *
+     * @see org.json.simple.Json2T
+     *
+     * @since 1.0.5.1
+     */
     public Json2T sort() {
-        float[] fls = toFloats();
-        if (fls == null) {
+        Json2T[] json2Ts = toObjs();
+        if (json2Ts == null) {
             return new Json2T("");
         }
-        Arrays.sort(fls);
-        return new Json2T(JSONValue.parse(Arrays.toString(fls)));
+        Arrays.sort(json2Ts);
+        return new Json2T(JSONValue.parse(arraysToString(json2Ts)));
     }
 
+    /**
+     * Đảo ngược mảng.
+     *
+     * @param
+     *
+     * @return Trả về đối tượng Json2T
+     *
+     * @throws
+     *
+     * @see org.json.simple.Json2T
+     *
+     * @since 1.0.5.1
+     */
     public Json2T reverse() {
-        float[] fls = toFloats();
-        if (fls == null) {
-            return new Json2T("");
+        Json2T[] json2Ts = toObjs();
+        for (int i = 0; i < json2Ts.length / 2; i++) {
+            int idMax = json2Ts.length - 1 - i;
+            Json2T json2T = json2Ts[i];
+            json2Ts[i] = json2Ts[idMax];
+            json2Ts[idMax] = json2T;
         }
-        for (int i = 0; i < fls.length / 2; i++) {
-            int idMax = fls.length - 1 - i;
-            float fl = fls[i];
-            fls[i] = fls[idMax];
-            fls[idMax] = fl;
-        }
-        return new Json2T(JSONValue.parse(Arrays.toString(fls)));
+        return new Json2T(JSONValue.parse(arraysToString(json2Ts)));
     }
 
-    //
+    /**
+     * Lấy mảng key và value của một node.
+     *
+     * @param
+     *
+     * @return Trả về mảng đối tượng Json2T[][]
+     *
+     * @throws
+     *
+     * @see org.json.simple.Json2T
+     *
+     * @since 1.0.5.1
+     */
     public Json2T[][] toPairObjs() {
         JSONObject jsonObject = toJsonObject(this.obj);
         if (jsonObject == null) {
@@ -155,6 +306,19 @@ public class Json2T {
         return jsonSimpleses;
     }
 
+    /**
+     * Lấy mảng tên key trong một node có key và value.
+     *
+     * @param
+     *
+     * @return Trả về mảng key trong node
+     *
+     * @throws
+     *
+     * @see org.json.simple.Json2T
+     *
+     * @since 1.0.5.1
+     */
     public String[] toKeys() {
         Json2T[][] json2Tses = toPairObjs();
         if (json2Tses == null) {
@@ -163,11 +327,24 @@ public class Json2T {
         String[] keys = new String[json2Tses.length];
         int i = 0;
         for (Json2T[] json2T : json2Tses) {
-            keys[i++] = json2T[0].toStr();
+            keys[i++] = json2T[0].toString();
         }
         return keys;
     }
 
+    /**
+     * Lấy mảng giá trị trong một node có key và value.
+     *
+     * @param
+     *
+     * @return Trả về mảng giá trị Json2T[] trong một node
+     *
+     * @throws
+     *
+     * @see org.json.simple.Json2T
+     *
+     * @since 1.0.5.1
+     */
     public Json2T[] toValues() {
         Json2T[][] json2Tses = toPairObjs();
         if (json2Tses == null) {
@@ -181,7 +358,19 @@ public class Json2T {
         return values;
     }
 
-    //
+    /**
+     * Lấy mảng giá trị trong một node.
+     *
+     * @param
+     *
+     * @return Trả về mảng giá trị Json2T[] trong một node
+     *
+     * @throws
+     *
+     * @see org.json.simple.Json2T
+     *
+     * @since 1.0.5.1
+     */
     public Json2T[] toObjs() {
         JSONArray jsonArray = toJsonArray(this.obj);
         if (jsonArray == null) {
@@ -194,7 +383,19 @@ public class Json2T {
         return jsonSimples;
     }
 
-    //
+    /**
+     * Lấy mảng chuỗi trong một node.
+     *
+     * @param
+     *
+     * @return Trả về mảng chuỗi trong node
+     *
+     * @throws
+     *
+     * @see org.json.simple.Json2T
+     *
+     * @since 1.0.5.1
+     */
     public String[] toStrs() {
         JSONArray jsonArray = toJsonArray(this.obj);
         if (jsonArray == null) {
@@ -207,6 +408,19 @@ public class Json2T {
         return strings;
     }
 
+    /**
+     * Lấy mảng kí tự trong một node.
+     *
+     * @param
+     *
+     * @return Trả về mảng kí tự trong node
+     *
+     * @throws
+     *
+     * @see org.json.simple.Json2T
+     *
+     * @since 1.0.5.1
+     */
     public char[] toChars() {
         JSONArray jsonArray = toJsonArray(this.obj);
         if (jsonArray == null) {
@@ -214,7 +428,7 @@ public class Json2T {
         }
         char[] chars = new char[jsonArray.size()];
         for (int i = 0; i < jsonArray.size(); i++) {
-            char charr = '_';
+            char charr = '0';
             try {
                 charr = jsonArray.get(i).toString().toCharArray()[0];
             } catch (ArrayIndexOutOfBoundsException e) {
@@ -224,6 +438,19 @@ public class Json2T {
         return chars;
     }
 
+    /**
+     * Lấy mảng số nguyên trong một node.
+     *
+     * @param
+     *
+     * @return Trả về mảng số thực trong node
+     *
+     * @throws
+     *
+     * @see org.json.simple.Json2T
+     *
+     * @since 1.0.5.1
+     */
     public int[] toInts() {
         JSONArray jsonArray = toJsonArray(this.obj);
         if (jsonArray == null) {
@@ -231,9 +458,9 @@ public class Json2T {
         }
         int[] ints = new int[jsonArray.size()];
         for (int i = 0; i < jsonArray.size(); i++) {
-            int intt = -1;
+            int intt = 0;
             try {
-                intt = Integer.parseInt(strInt(jsonArray.get(i).toString()));
+                intt = Integer.parseInt(strToInt(jsonArray.get(i).toString()));
             } catch (NumberFormatException e) {
             }
             ints[i] = intt;
@@ -241,6 +468,19 @@ public class Json2T {
         return ints;
     }
 
+    /**
+     * Lấy mảng số nguyên trong một node.
+     *
+     * @param
+     *
+     * @return Trả về mảng số thực trong node
+     *
+     * @throws
+     *
+     * @see org.json.simple.Json2T
+     *
+     * @since 1.0.5.1
+     */
     public long[] toLongs() {
         JSONArray jsonArray = toJsonArray(this.obj);
         if (jsonArray == null) {
@@ -248,9 +488,9 @@ public class Json2T {
         }
         long[] longs = new long[jsonArray.size()];
         for (int i = 0; i < jsonArray.size(); i++) {
-            long longg = -1;
+            long longg = 0;
             try {
-                longg = Long.parseLong(strInt(jsonArray.get(i).toString()));
+                longg = Long.parseLong(strToInt(jsonArray.get(i).toString()));
             } catch (NumberFormatException e) {
             }
             longs[i] = longg;
@@ -258,6 +498,19 @@ public class Json2T {
         return longs;
     }
 
+    /**
+     * Lấy mảng số thực trong một node.
+     *
+     * @param
+     *
+     * @return Trả về mảng số thực trong node
+     *
+     * @throws
+     *
+     * @see org.json.simple.Json2T
+     *
+     * @since 1.0.5.1
+     */
     public double[] toDoubles() {
         JSONArray jsonArray = toJsonArray(this.obj);
         if (jsonArray == null) {
@@ -265,7 +518,7 @@ public class Json2T {
         }
         double[] doubles = new double[jsonArray.size()];
         for (int i = 0; i < jsonArray.size(); i++) {
-            double doublee = -1;
+            double doublee = 0;
             try {
                 doublee = Double.parseDouble(jsonArray.get(i).toString());
             } catch (NumberFormatException e) {
@@ -275,6 +528,19 @@ public class Json2T {
         return doubles;
     }
 
+    /**
+     * Lấy mảng số thực trong một node.
+     *
+     * @param
+     *
+     * @return Trả về mảng số thực trong node
+     *
+     * @throws
+     *
+     * @see org.json.simple.Json2T
+     *
+     * @since 1.0.5.1
+     */
     public float[] toFloats() {
         JSONArray jsonArray = toJsonArray(this.obj);
         if (jsonArray == null) {
@@ -282,7 +548,7 @@ public class Json2T {
         }
         float[] floats = new float[jsonArray.size()];
         for (int i = 0; i < jsonArray.size(); i++) {
-            float floatt = -1;
+            float floatt = 0;
             try {
                 floatt = Float.parseFloat(jsonArray.get(i).toString());
             } catch (NumberFormatException e) {
@@ -292,60 +558,210 @@ public class Json2T {
         return floats;
     }
 
-    //    
+    /**
+     * Lấy đối tượng
+     *
+     * @param
+     *
+     * @return Trả về object
+     *
+     * @throws
+     *
+     * @see org.json.simple.Json2T
+     *
+     * @since 1.0.5.1
+     */
     public Object toObj() {
         return this.obj;
     }
 
+    /**
+     * Lấy chuỗi
+     *
+     * @param
+     *
+     * @return Trả về chuỗi
+     *
+     * @throws
+     *
+     * @see org.json.simple.Json2T
+     *
+     * @since 1.0.5.1
+     */
     public String toStr() {
         return this.obj == null ? null : this.obj.toString();
     }
 
+    /**
+     * Lấy chuỗi
+     *
+     * @param
+     *
+     * @return Trả về chuỗi
+     *
+     * @throws
+     *
+     * @see org.json.simple.Json2T
+     *
+     * @since 1.0.5.1
+     */
+    @Override
+    public String toString() {
+        return toStr();
+    }
+
+    /**
+     * Lấy kí tự
+     *
+     * @param
+     *
+     * @return Trả về kí tự
+     *
+     * @throws
+     *
+     * @see org.json.simple.Json2T
+     *
+     * @since 1.0.5.1
+     */
     public char toChar() {
         try {
             return this.obj.toString().toCharArray()[0];
         } catch (ArrayIndexOutOfBoundsException | NullPointerException e) {
-            return '_';
+            return '0';
         }
     }
 
+    /**
+     * Lấy số nguyên
+     *
+     * @param
+     *
+     * @return Trả về số nguyên
+     *
+     * @throws
+     *
+     * @see org.json.simple.Json2T
+     *
+     * @since 1.0.5.1
+     */
     public int toInt() {
         try {
-            return Integer.parseInt(strInt(this.obj.toString()));
+            return Integer.parseInt(strToInt(this.obj.toString()));
         } catch (NumberFormatException | NullPointerException e) {
-            return -1;
+            return 0;
         }
     }
 
+    /**
+     * Lấy số nguyên
+     *
+     * @param
+     *
+     * @return Trả về số nguyên
+     *
+     * @throws
+     *
+     * @see org.json.simple.Json2T
+     *
+     * @since 1.0.5.1
+     */
     public long toLong() {
         try {
-            return Long.parseLong(strInt(this.obj.toString()));
+            return Long.parseLong(strToInt(this.obj.toString()));
         } catch (NumberFormatException | NullPointerException e) {
-            return -1;
+            return 0;
         }
     }
 
+    /**
+     * Lấy số thực
+     *
+     * @param
+     *
+     * @return Trả về số thực
+     *
+     * @throws
+     *
+     * @see org.json.simple.Json2T
+     *
+     * @since 1.0.5.1
+     */
     public double toDouble() {
         try {
             return Double.parseDouble(this.obj.toString());
         } catch (NumberFormatException | NullPointerException e) {
-            return -1;
+            return 0;
         }
     }
 
+    /**
+     * Lấy số thực
+     *
+     * @param
+     *
+     * @return Trả về số thực
+     *
+     * @throws
+     *
+     * @see org.json.simple.Json2T
+     *
+     * @since 1.0.5.1
+     */
     public float toFloat() {
         try {
             return Float.parseFloat(this.obj.toString());
         } catch (NumberFormatException | NullPointerException e) {
-            return -1;
+            return 0;
         }
     }
 
+    /**
+     * Lấy dộ dài của mảng
+     *
+     * @param
+     *
+     * @return Trả về độ dài của mảng
+     *
+     * @throws
+     *
+     * @see org.json.simple.Json2T
+     *
+     * @since 1.0.5.1
+     */
     //
     public int length() {
         int lengthObject = isInstanceOfJsonObject(this.obj) ? toJsonObject(this.obj).size() : -1;
         int lengthArray = isInstanceOfJsonArray(this.obj) ? toJsonArray(this.obj).size() : -1;
         return lengthArray > lengthObject ? lengthArray : lengthObject;
+    }
+
+    @Override
+    public int compareTo(Json2T json2T) {
+        if (this.obj == null) {
+            return -1;
+        }
+        String oThis = this.toString();
+        String oThat = json2T.toString();
+        if (isNumber(oThis) && isNumber(oThat)) {
+            return Float.parseFloat(oThis) > Float.parseFloat(oThat) ? 1 : -1;
+        } else {
+            int len1 = oThis.length();
+            int len2 = oThat.length();
+            int lim = Math.min(len1, len2);
+            char v1[] = oThis.toCharArray();
+            char v2[] = oThat.toCharArray();
+            int k = 0;
+            while (k < lim) {
+                char c1 = v1[k];
+                char c2 = v2[k];
+                if (c1 != c2) {
+                    return c1 - c2;
+                }
+                k++;
+            }
+            return len1 - len2;
+        }
+
     }
 
     //
@@ -382,7 +798,7 @@ public class Json2T {
         return matchs.length == 0 ? null : matchs;
     }
 
-    private static String strInt(String fl) {
+    private static String strToInt(String fl) {
         if (fl.contains(".")) {
             return fl.substring(0, fl.indexOf("."));
         }
@@ -398,4 +814,22 @@ public class Json2T {
         return fl;
     }
 
+    private static String arraysToString(Object[] objs) {
+        StringBuilder stringBuilder = new StringBuilder("[");
+        for (Object obj : objs) {
+            String str = obj == null ? "" : obj.toString().replaceAll("\"", "\\\\\"");
+            stringBuilder.append("\"").append(str).append("\",");
+        }
+
+        return stringBuilder.toString().substring(0, stringBuilder.length() - 1) + "]";
+    }
+
+    private static boolean isNumber(String num) {
+        try {
+            float fl = Float.parseFloat(num);
+            return true;
+        } catch (NumberFormatException | NullPointerException e) {
+            return false;
+        }
+    }
 }

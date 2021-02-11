@@ -25,11 +25,11 @@
 #### Lấy giá trị:
 - `toObj(): Object` -> lấy object giá trị
 - `toStr(): String` -> trả về chuỗi giá trị
-- `toChar(): char` -> trả về kiểu kí tự (có lỗi sảy ra trả về (`_`))
-- `toInt(): int` -> trả về giá trị kiểu int (không thể ép kiểu trả về -1)
-- `toLong(): long` -> trả về giá trị kiểu long (không thể ép kiểu trả về -1)
-- `toDouble(): double` -> trả về giá trị kiểu double (không thể ép kiểu trả về -1)
-- `toFloat(): float` -> trả về giá trị kiểu float (không thể ép kiểu trả về -1)
+- `toChar(): char` -> trả về kiểu kí tự (có lỗi sảy ra trả về (`0`))
+- `toInt(): int` -> trả về giá trị kiểu int (không thể ép kiểu trả về 0)
+- `toLong(): long` -> trả về giá trị kiểu long (không thể ép kiểu trả về 0)
+- `toDouble(): double` -> trả về giá trị kiểu double (không thể ép kiểu trả về 0)
+- `toFloat(): float` -> trả về giá trị kiểu float (không thể ép kiểu trả về 0)
 - `length(): int` -> lấy độ dài của mảng, trả về -1 nếu là Object hoặc Null
 
 #### Lấy mảng giá trị:
@@ -39,10 +39,10 @@
 - `toObjs(): Json2T[]` -> trả về mảng đối tượng Json2T
 - `toStrs(): String[]` -> trả về mảng chuỗi 
 - `toChars(): char[]` -> trả về mảng kí tự (có lỗi sảy ra trả về (`_`))
-- `toInts(): int[]` -> trả về mảng int (không thể ép kiểu trả về -1)
-- `toLongs(): long[]` -> trả về mảng long (không thể ép kiểu trả về -1)
-- `toDoubles(): double[]` -> trả về mảng double (không thể ép kiểu trả về -1)
-- `toFloats(): float[]` -> trả về mảng float (không thể ép kiểu trả về -1)
+- `toInts(): int[]` -> trả về mảng int (không thể ép kiểu trả về 0)
+- `toLongs(): long[]` -> trả về mảng long (không thể ép kiểu trả về 0)
+- `toDoubles(): double[]` -> trả về mảng double (không thể ép kiểu trả về 0)
+- `toFloats(): float[]` -> trả về mảng float (không thể ép kiểu trả về 0)
 
 
 ## Hướng dẫn:
@@ -55,6 +55,13 @@
 - bất cứ lỗi nào sảy ra sẽ trả về Null
 
 ## Cập nhật:
+
+#### v1.0.6
+- fix `sort():Json2T` sắp sếp được cả chuỗi, và số (có lỗi trả về mảng -1)
+- fix `reverse():Json2T` đảo được cả mảng chuỗi và số (có lỗi trả về mảng -1)
+- update lại có lỗi sảy ra trả về 0 thay vì -1 hoặc `_`
+- update lại `toString():String` tương đương `toStr():String`
+- add note vào các hàm (sử dụng tốt trên netbean)
 
 #### v1.0.5
 - thêm hàm `avg(): Json2T` trả về trung bình cộng một mảng (cần ép về giá trị gì thì dùng các hàm `Lấy giá trị` ở trên)
@@ -93,6 +100,6 @@
 ## Thông tin:
 - Tên: Json2T
 - Tác giả: Thiên Đẹp Zaii ( SystemError )
-- Phiên bản: 1.0.5
+- Phiên bản: 1.0.6
 - Thư viện sử dụng: JSON SIMPLE
 - Phiên bản thư viện: 1.1.1
