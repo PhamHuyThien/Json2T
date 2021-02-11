@@ -1,5 +1,6 @@
 
-import json2t.Json2T;
+import java.util.Arrays;
+import org.json.simple.Json2T;
 
 public class ExampleJson2T {
 
@@ -134,11 +135,49 @@ public class ExampleJson2T {
         //truy cập phần tử thứ 3 trong mảng 0
         //int index3index0 = json2T.i(0).i(3).toInt();
         int index3index0 = json2T.q("[0][3]").toInt();
-        System.out.println("index3index0: "+index3index0);
+        System.out.println("index3index0: " + index3index0);
         //truy cập đến vị trí thứ 3
         //int index2 = json2T.i(2).toInt();
         int index2 = json2T.q("[3]").toInt();
         System.out.println("index3: " + index2);
+
+        //
+        json = "{\n"
+                + "   \"mix\":[\n"
+                + "      5,\n"
+                + "      4,\n"
+                + "      5,\n"
+                + "      6,\n"
+                + "      7,\n"
+                + "      8,\n"
+                + "      9,\n"
+                + "      0,\n"
+                + "      74,\n"
+                + "      1,\n"
+                + "      0,\n"
+                + "      -500,\n"
+                + "      -1108\n"
+                + "   ]\n"
+                + "}";
+        json2T = Json2T.parse(json);
+        //số lớn nhất
+        int max = json2T.q(".mix").max().toInt();
+        System.out.println("Số lớn nhất: " + max);
+        //số nhỏ nhất
+        int min = json2T.q(".mix").min().toInt();
+        System.out.println("Số nhỏ nhất: " + min);
+        //sắp xếp mảng
+        int[] sort = json2T.q(".mix").sort().toInts();
+        System.out.println("sắp xếp tăng dần: " + Arrays.toString(sort));
+        //sắp xếp giảm dần
+        int[] sortReverse = json2T.q(".mix").sort().reverse().toInts();
+        System.out.println("sắp xếp giảm dần: " + Arrays.toString(sortReverse));
+        //tổng 
+        int sum = json2T.q(".mix").sum().toInt();
+        System.out.println("Tổng: " + sum);
+        //trung bình cộng
+        float avg = json2T.q(".mix").avg().toFloat();
+        System.out.println("Trung bình cộng: " + avg);
     }
 
 }

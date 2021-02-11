@@ -1,21 +1,18 @@
-package json2t;
+package org.json.simple;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 
 /*
     @Name       :   Json2T
     @Author     :   ThienDepTraii
-    @Version    :   1.0.4
+    @Version    :   1.0.5
     @Library    :   JsonSimple V1.1.1
  */
-
 public class Json2T {
 
     private final Object obj;
@@ -50,7 +47,6 @@ public class Json2T {
     }
 
     public Json2T q(String query) {
-        final Object objectNull = null;
         Object objTmp = this.obj;
         //đầu vào hợp lệ
         if (objTmp == null) {
@@ -58,7 +54,7 @@ public class Json2T {
         }
         //query hợp lệ
         if (stringRegex("^((\\.\\w+(\\[\\d+\\])*)|((\\[\\d+\\])*))+$", query) == null) {
-            return new Json2T(objectNull);
+            return new Json2T("");
         }
         String[] querys = query.split("\\.");
         for (String q : querys) {
@@ -73,7 +69,7 @@ public class Json2T {
                 }
                 String[] strIndexs = stringRegex("\\[(\\d+)\\]+", q);
                 for (String strIndex : strIndexs) {
-                    int index = Integer.parseInt(strIndex.substring(1, strIndex.length()-1));
+                    int index = Integer.parseInt(strIndex.substring(1, strIndex.length() - 1));
                     JSONArray jsonArrayTmp = toJsonArray(objTmp);
                     objTmp = jsonArrayTmp != null ? jsonArrayTmp.get(index) : null;
                 }
@@ -83,6 +79,63 @@ public class Json2T {
             }
         }
         return new Json2T(objTmp);
+    }
+
+    public Json2T min() {
+        float[] fls = toFloats();
+        if (fls == null) {
+            return new Json2T("");
+        }
+        Arrays.sort(fls);
+        return new Json2T((Object) fls[0]);
+    }
+
+    public Json2T max() {
+        float[] fls = toFloats();
+        if (fls == null) {
+            return new Json2T("");
+        }
+        Arrays.sort(fls);
+        return new Json2T((Object) fls[fls.length - 1]);
+    }
+
+    public Json2T sum() {
+        float[] fls = toFloats();
+        if (fls == null) {
+            return new Json2T("");
+        }
+        return new Json2T((Object) sumFloat(fls));
+    }
+
+    public Json2T avg() {
+        float[] fls = toFloats();
+        if (fls == null) {
+            return new Json2T("");
+        }
+        return new Json2T((Object) (sumFloat(fls) / fls.length));
+    }
+
+    public Json2T sort() {
+        float[] fls = toFloats();
+        if (fls == null) {
+            return new Json2T("");
+        }
+        Arrays.sort(fls);
+        return new Json2T(JSONValue.parse(Arrays.toString(fls)));
+    }
+
+    public Json2T reverse() {
+        float[] fls = toFloats();
+        if (fls == null) {
+            return new Json2T("");
+        }
+        for (int i = 0; i < fls.length / 2; i++) {
+            int idMax = fls.length - 1 - i;
+            float fl = fls[i];
+            fls[i] = fls[idMax];
+            fls[idMax] = fl;
+        }
+        return new Json2T(JSONValue.parse(Arrays.toString(fls)));
     }
 
     //
@@ -180,7 +233,7 @@ public class Json2T {
         for (int i = 0; i < jsonArray.size(); i++) {
             int intt = -1;
             try {
-                intt = Integer.parseInt(jsonArray.get(i).toString());
+                intt = Integer.parseInt(strInt(jsonArray.get(i).toString()));
             } catch (NumberFormatException e) {
             }
             ints[i] = intt;
@@ -197,7 +250,7 @@ public class Json2T {
         for (int i = 0; i < jsonArray.size(); i++) {
             long longg = -1;
             try {
-                longg = Long.parseLong(jsonArray.get(i).toString());
+                longg = Long.parseLong(strInt(jsonArray.get(i).toString()));
             } catch (NumberFormatException e) {
             }
             longs[i] = longg;
@@ -258,7 +311,7 @@ public class Json2T {
 
     public int toInt() {
         try {
-            return Integer.parseInt(this.obj.toString());
+            return Integer.parseInt(strInt(this.obj.toString()));
         } catch (NumberFormatException | NullPointerException e) {
             return -1;
         }
@@ -266,7 +319,7 @@ public class Json2T {
 
     public long toLong() {
         try {
-            return Long.parseLong(this.obj.toString());
+            return Long.parseLong(strInt(this.obj.toString()));
         } catch (NumberFormatException | NullPointerException e) {
             return -1;
         }
@@ -288,6 +341,7 @@ public class Json2T {
         }
     }
 
+    //
     public int length() {
         int lengthObject = isInstanceOfJsonObject(this.obj) ? toJsonObject(this.obj).size() : -1;
         int lengthArray = isInstanceOfJsonArray(this.obj) ? toJsonArray(this.obj).size() : -1;
@@ -327,4 +381,21 @@ public class Json2T {
         }
         return matchs.length == 0 ? null : matchs;
     }
+
+    private static String strInt(String fl) {
+        if (fl.contains(".")) {
+            return fl.substring(0, fl.indexOf("."));
+        }
+        return fl;
+    }
+
+    private static float sumFloat(float[] fls) {
+        float fl = 0;
+        for (int i = 0; i < fls.length / 2; i++) {
+            fl += fls[i] + fls[fls.length - 1 - i];
+        }
+        fl += fls.length % 2 == 0 ? 0 : fls[fls.length / 2];
+        return fl;
+    }
+
 }
