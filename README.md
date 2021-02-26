@@ -11,6 +11,7 @@
 #### Static Method:
 - `parse(String json): Json2T` -> json là chuỗi json cần parse
 - `parse(Object object): Json2T` -> object được parse từ `JSONValue.parse(String json): Object`
+- `cre(): Json2T` -> khởi tạo 1 object null, chuẩn bị để tạo array(`[]`) hoặc object(`{}`)
 
 #### Callback:
 - `k(String key): Json2T` -> key là key muốn get value trong json
@@ -18,9 +19,12 @@
 - `q(String query): Json2T` -> query là chuỗi truy cập object như javascript (query="" tương đương this)
 - `min(): Json2T` -> lấy giá trị nhỏ nhất trong mảng (ép về `giá trị`)
 - `max(): Json2T` -> lấy giá trị lớn nhất trong mảng (ép về `giá trị`)
+- `sort(): Json2T` -> sắp xếp lại mảng theo giá trị tăng dần (ép về `mảng giá trị`)
 - `reverse(): Json2T` -> trả về mảng số đảo ngược (ép về `mảng giá trị`)
 - `sum(): Json2T` -> trả về tổng các phần tử trong mảng (ép về `giá trị`)
 - `avg(): Json2T` -> trả về trung bình cộng các phần tử trong mảng (ép về `giá trị`)
+- `putObj(Object... objs): Json2T` -> thêm danh sách key:value (length%2==0)
+- `putArr(Object... objs): Json2T` -> thêm danh sách giá trị vào mảng
 
 #### Lấy giá trị:
 - `toObj(): Object` -> lấy object giá trị
@@ -38,7 +42,7 @@
 - `toValues(): Json2T[]` -> lấy mảng value trong json (tương đương `[i][1]` trong `toPairObjs():Json2T[][]`)
 - `toObjs(): Json2T[]` -> trả về mảng đối tượng Json2T
 - `toStrs(): String[]` -> trả về mảng chuỗi 
-- `toChars(): char[]` -> trả về mảng kí tự (có lỗi sảy ra trả về (`_`))
+- `toChars(): char[]` -> trả về mảng kí tự (có lỗi sảy ra trả về (`'0'`))
 - `toInts(): int[]` -> trả về mảng int (không thể ép kiểu trả về 0)
 - `toLongs(): long[]` -> trả về mảng long (không thể ép kiểu trả về 0)
 - `toDoubles(): double[]` -> trả về mảng double (không thể ép kiểu trả về 0)
@@ -46,7 +50,8 @@
 
 
 ## Hướng dẫn:
-- xem `ExampleJson2T.java` trong src
+- đọc JSON vui lòng xem `ExampleJson2T.java` trong src
+- tạo JSON vui lòng xem `ExampleBuildJson2T.java` trong src
 
 ## Lưu ý:
 - tốc độ code và đọc dữ liệu thì callback `q` nhanh hơn dùng callback `k` và `i`
@@ -55,11 +60,14 @@
 - bất cứ lỗi nào sảy ra sẽ trả về Null
 
 ## Cập nhật:
-
+#### v2.0.0
+- thêm `cre():Json2T` để tạo mảng json (kết hợp `putObj` hoặc `putArr` để tạo) 
+- thêm `putObj(Object... objs): Json2T` tạo mảng object list `{a: 1, b: 2, ...}`
+- thêm `putArr(Object... objs): Json2T` tạo mảng giá trị `[1, 2, 3,...]`
 #### v1.0.6
-- fix `sort():Json2T` sắp sếp được cả chuỗi, và số (có lỗi trả về mảng -1)
-- fix `reverse():Json2T` đảo được cả mảng chuỗi và số (có lỗi trả về mảng -1)
-- update lại có lỗi sảy ra trả về 0 thay vì -1 hoặc `_`
+- fix `sort():Json2T` sắp sếp được cả chuỗi, và số (có lỗi trả về mảng 0)
+- fix `reverse():Json2T` đảo được cả mảng chuỗi và số (có lỗi trả về mảng 0)
+- update lại có lỗi sảy ra trả về 0 thay vì -1 hoặc `'_'`
 - update lại `toString():String` tương đương `toStr():String`
 - add note vào các hàm (sử dụng tốt trên netbean)
 

@@ -158,7 +158,7 @@ public class ExampleJson2T {
                 + "      1,\n"
                 + "      0,\n"
                 + "      -500,\n"
-                + "      -1108\n"
+                + "      -1107\n"
                 + "   ]\n"
                 + "}";
         json2T = Json2T.parse(json);

@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
  */
 public class Json2T implements Comparable<Json2T> {
 
-    private final Object obj;
+    private Object obj;
 
     /**
      * parse chuỗi json cần đọc.
@@ -24,11 +24,9 @@ public class Json2T implements Comparable<Json2T> {
      *
      * @return Trả về Json2T
      *
-     * @throws
-     *
      * @see org.json.simple.Json2T
      *
-     * @since 1.0.5.1
+     * @since 1.6.0
      */
     public static Json2T parse(String json) {
         return new Json2T(json);
@@ -42,17 +40,33 @@ public class Json2T implements Comparable<Json2T> {
      *
      * @return Trả về Json2T
      *
-     * @throws
-     *
      * @see org.json.simple.Json2T
      *
-     * @since 1.0.5.1
+     * @since 2.0.0.0
      */
     public static Json2T parse(Object object) {
         return new Json2T(object);
     }
 
+    /**
+     * khởi tạo 1 Json null sẵn sàng cho việc put array hoặc object.
+     *
+     * @param
+     *
+     * @return Trả về Json2T
+     *
+     * @see org.json.simple.Json2T
+     *
+     * @since 2.0.0.0
+     */
+    public static Json2T cre() {
+        return new Json2T();
+    }
+
     //
+    public Json2T() {
+    }
+
     public Json2T(Object object) {
         this.obj = object;
     }
@@ -68,11 +82,9 @@ public class Json2T implements Comparable<Json2T> {
      *
      * @return Trả về đối tượng Json2T
      *
-     * @throws
-     *
      * @see org.json.simple.Json2T
      *
-     * @since 1.0.5.1
+     * @since 2.0.0.0
      */
     public Json2T k(String key) {
         JSONObject jsonObj = toJsonObject(this.obj);
@@ -86,11 +98,9 @@ public class Json2T implements Comparable<Json2T> {
      *
      * @return Trả về đối tượng Json2T
      *
-     * @throws
-     *
      * @see org.json.simple.Json2T
      *
-     * @since 1.0.5.1
+     * @since 2.0.0.0
      */
     public Json2T i(int index) {
         JSONArray jsonArray = toJsonArray(this.obj);
@@ -104,11 +114,9 @@ public class Json2T implements Comparable<Json2T> {
      *
      * @return Trả về đối tượng Json2T
      *
-     * @throws
-     *
      * @see org.json.simple.Json2T
      *
-     * @since 1.0.5.1
+     * @since 2.0.0.0
      */
     public Json2T q(String query) {
         Object objTmp = this.obj;
@@ -133,7 +141,7 @@ public class Json2T implements Comparable<Json2T> {
                 }
                 String[] strIndexs = stringRegex("\\[(\\d+)\\]+", q);
                 for (String strIndex : strIndexs) {
-                    int index = Integer.parseInt(strIndex.substring(1, strIndex.length() - 1));
+                    int index = Integer.parseInt(strIndex.replaceAll("\\[|\\]", ""));
                     JSONArray jsonArrayTmp = toJsonArray(objTmp);
                     objTmp = jsonArrayTmp != null ? jsonArrayTmp.get(index) : null;
                 }
@@ -146,17 +154,52 @@ public class Json2T implements Comparable<Json2T> {
     }
 
     /**
-     * Lấy số nhỏ nhất trong mảng.
+     * tạo mảng [] chứ value.
      *
-     * @param
+     * @param objs mảng object chứa giá trị cần tạo mảng.
      *
-     * @return Trả về đối tượng Json2T
-     *
-     * @throws
-     *
+     * @return Trả về đối tượng JSONArray
+     * 
      * @see org.json.simple.Json2T
      *
-     * @since 1.0.5.1
+     * @since 2.0.0.0
+     */
+    public Json2T putArr(Object... objs) {
+        JSONArray ja = this.obj == null ? new JSONArray() : (JSONArray) this.obj;
+        ja.addAll(Arrays.asList(objs));
+        return new Json2T(ja);
+    }
+    /**
+     * tạo mảng {} chứa key: value. Lưu ý cần chú ý số lượng của phần tử mảng
+     * đầu vào phải chia hết cho 2 (đảm bảo đủ key và value)
+     *
+     * @param pair mảng object chứa giá trị cần tạo mảng.
+     *
+     * @return Trả về đối tượng JSONObject
+     * 
+     * @see org.json.simple.Json2T
+     *
+     * @since 2.0.0.0
+     */
+    public Json2T putObj(Object... pair) {
+        if (pair.length % 2 == 0) {
+            JSONObject jo = this.obj == null ? new JSONObject() : (JSONObject) this.obj;
+            for (int i = 0; i < pair.length; i += 2) {
+                jo.put(pair[i], pair[i + 1]);
+            }
+            return new Json2T(jo);
+        }
+        return null;
+    }
+
+    /**
+     * Lấy số nhỏ nhất trong mảng.
+     * 
+     *@return Trả về đối tượng Json2T
+     * 
+     * @see org.json.simple.Json2T
+     *
+     * @since 2.0.0.0
      */
     public Json2T min() {
         float[] fls = toFloats();
@@ -169,16 +212,12 @@ public class Json2T implements Comparable<Json2T> {
 
     /**
      * Lấy số lớn nhất trong mảng.
-     *
-     * @param
-     *
-     * @return Trả về đối tượng Json2T
-     *
-     * @throws
-     *
+     * 
+     *@return Trả về đối tượng Json2T
+     * 
      * @see org.json.simple.Json2T
      *
-     * @since 1.0.5.1
+     * @since 2.0.0.0
      */
     public Json2T max() {
         float[] fls = toFloats();
@@ -192,15 +231,11 @@ public class Json2T implements Comparable<Json2T> {
     /**
      * Tính tổng trong mảng.
      *
-     * @param
-     *
      * @return Trả về đối tượng Json2T
-     *
-     * @throws
      *
      * @see org.json.simple.Json2T
      *
-     * @since 1.0.5.1
+     * @since 2.0.0.0
      */
     public Json2T sum() {
         float[] fls = toFloats();
@@ -213,15 +248,11 @@ public class Json2T implements Comparable<Json2T> {
     /**
      * Tính trung bình cộng của mảng.
      *
-     * @param
-     *
      * @return Trả về đối tượng Json2T
-     *
-     * @throws
      *
      * @see org.json.simple.Json2T
      *
-     * @since 1.0.5.1
+     * @since 2.0.0.0
      */
     public Json2T avg() {
         float[] fls = toFloats();
@@ -234,15 +265,11 @@ public class Json2T implements Comparable<Json2T> {
     /**
      * Sắp xếp mảng tăng dần.
      *
-     * @param
-     *
      * @return Trả về đối tượng Json2T
-     *
-     * @throws
      *
      * @see org.json.simple.Json2T
      *
-     * @since 1.0.5.1
+     * @since 2.0.0.0
      */
     public Json2T sort() {
         Json2T[] json2Ts = toObjs();
@@ -256,15 +283,11 @@ public class Json2T implements Comparable<Json2T> {
     /**
      * Đảo ngược mảng.
      *
-     * @param
-     *
      * @return Trả về đối tượng Json2T
-     *
-     * @throws
      *
      * @see org.json.simple.Json2T
      *
-     * @since 1.0.5.1
+     * @since 2.0.0.0
      */
     public Json2T reverse() {
         Json2T[] json2Ts = toObjs();
@@ -280,15 +303,11 @@ public class Json2T implements Comparable<Json2T> {
     /**
      * Lấy mảng key và value của một node.
      *
-     * @param
-     *
      * @return Trả về mảng đối tượng Json2T[][]
-     *
-     * @throws
      *
      * @see org.json.simple.Json2T
      *
-     * @since 1.0.5.1
+     * @since 2.0.0.0
      */
     public Json2T[][] toPairObjs() {
         JSONObject jsonObject = toJsonObject(this.obj);
@@ -309,15 +328,11 @@ public class Json2T implements Comparable<Json2T> {
     /**
      * Lấy mảng tên key trong một node có key và value.
      *
-     * @param
-     *
      * @return Trả về mảng key trong node
-     *
-     * @throws
      *
      * @see org.json.simple.Json2T
      *
-     * @since 1.0.5.1
+     * @since 2.0.0.0
      */
     public String[] toKeys() {
         Json2T[][] json2Tses = toPairObjs();
@@ -335,15 +350,11 @@ public class Json2T implements Comparable<Json2T> {
     /**
      * Lấy mảng giá trị trong một node có key và value.
      *
-     * @param
-     *
      * @return Trả về mảng giá trị Json2T[] trong một node
-     *
-     * @throws
      *
      * @see org.json.simple.Json2T
      *
-     * @since 1.0.5.1
+     * @since 2.0.0.0
      */
     public Json2T[] toValues() {
         Json2T[][] json2Tses = toPairObjs();
@@ -361,15 +372,11 @@ public class Json2T implements Comparable<Json2T> {
     /**
      * Lấy mảng giá trị trong một node.
      *
-     * @param
-     *
      * @return Trả về mảng giá trị Json2T[] trong một node
-     *
-     * @throws
      *
      * @see org.json.simple.Json2T
      *
-     * @since 1.0.5.1
+     * @since 2.0.0.0
      */
     public Json2T[] toObjs() {
         JSONArray jsonArray = toJsonArray(this.obj);
@@ -386,15 +393,11 @@ public class Json2T implements Comparable<Json2T> {
     /**
      * Lấy mảng chuỗi trong một node.
      *
-     * @param
-     *
      * @return Trả về mảng chuỗi trong node
-     *
-     * @throws
      *
      * @see org.json.simple.Json2T
      *
-     * @since 1.0.5.1
+     * @since 2.0.0.0
      */
     public String[] toStrs() {
         JSONArray jsonArray = toJsonArray(this.obj);
@@ -411,15 +414,11 @@ public class Json2T implements Comparable<Json2T> {
     /**
      * Lấy mảng kí tự trong một node.
      *
-     * @param
-     *
      * @return Trả về mảng kí tự trong node
-     *
-     * @throws
      *
      * @see org.json.simple.Json2T
      *
-     * @since 1.0.5.1
+     * @since 2.0.0.0
      */
     public char[] toChars() {
         JSONArray jsonArray = toJsonArray(this.obj);
@@ -441,15 +440,11 @@ public class Json2T implements Comparable<Json2T> {
     /**
      * Lấy mảng số nguyên trong một node.
      *
-     * @param
-     *
      * @return Trả về mảng số thực trong node
-     *
-     * @throws
      *
      * @see org.json.simple.Json2T
      *
-     * @since 1.0.5.1
+     * @since 2.0.0.0
      */
     public int[] toInts() {
         JSONArray jsonArray = toJsonArray(this.obj);
@@ -471,15 +466,11 @@ public class Json2T implements Comparable<Json2T> {
     /**
      * Lấy mảng số nguyên trong một node.
      *
-     * @param
-     *
      * @return Trả về mảng số thực trong node
-     *
-     * @throws
      *
      * @see org.json.simple.Json2T
      *
-     * @since 1.0.5.1
+     * @since 2.0.0.0
      */
     public long[] toLongs() {
         JSONArray jsonArray = toJsonArray(this.obj);
@@ -501,15 +492,11 @@ public class Json2T implements Comparable<Json2T> {
     /**
      * Lấy mảng số thực trong một node.
      *
-     * @param
-     *
      * @return Trả về mảng số thực trong node
-     *
-     * @throws
      *
      * @see org.json.simple.Json2T
      *
-     * @since 1.0.5.1
+     * @since 2.0.0.0
      */
     public double[] toDoubles() {
         JSONArray jsonArray = toJsonArray(this.obj);
@@ -531,15 +518,11 @@ public class Json2T implements Comparable<Json2T> {
     /**
      * Lấy mảng số thực trong một node.
      *
-     * @param
-     *
      * @return Trả về mảng số thực trong node
-     *
-     * @throws
      *
      * @see org.json.simple.Json2T
      *
-     * @since 1.0.5.1
+     * @since 2.0.0.0
      */
     public float[] toFloats() {
         JSONArray jsonArray = toJsonArray(this.obj);
@@ -561,15 +544,11 @@ public class Json2T implements Comparable<Json2T> {
     /**
      * Lấy đối tượng
      *
-     * @param
-     *
      * @return Trả về object
-     *
-     * @throws
      *
      * @see org.json.simple.Json2T
      *
-     * @since 1.0.5.1
+     * @since 2.0.0.0
      */
     public Object toObj() {
         return this.obj;
@@ -578,15 +557,11 @@ public class Json2T implements Comparable<Json2T> {
     /**
      * Lấy chuỗi
      *
-     * @param
-     *
      * @return Trả về chuỗi
-     *
-     * @throws
      *
      * @see org.json.simple.Json2T
      *
-     * @since 1.0.5.1
+     * @since 2.0.0.0
      */
     public String toStr() {
         return this.obj == null ? null : this.obj.toString();
@@ -595,15 +570,11 @@ public class Json2T implements Comparable<Json2T> {
     /**
      * Lấy chuỗi
      *
-     * @param
-     *
      * @return Trả về chuỗi
-     *
-     * @throws
      *
      * @see org.json.simple.Json2T
      *
-     * @since 1.0.5.1
+     * @since 2.0.0.0
      */
     @Override
     public String toString() {
@@ -613,15 +584,11 @@ public class Json2T implements Comparable<Json2T> {
     /**
      * Lấy kí tự
      *
-     * @param
-     *
      * @return Trả về kí tự
-     *
-     * @throws
      *
      * @see org.json.simple.Json2T
      *
-     * @since 1.0.5.1
+     * @since 2.0.0.0
      */
     public char toChar() {
         try {
@@ -634,15 +601,11 @@ public class Json2T implements Comparable<Json2T> {
     /**
      * Lấy số nguyên
      *
-     * @param
-     *
      * @return Trả về số nguyên
-     *
-     * @throws
      *
      * @see org.json.simple.Json2T
      *
-     * @since 1.0.5.1
+     * @since 2.0.0.0
      */
     public int toInt() {
         try {
@@ -655,15 +618,11 @@ public class Json2T implements Comparable<Json2T> {
     /**
      * Lấy số nguyên
      *
-     * @param
-     *
      * @return Trả về số nguyên
-     *
-     * @throws
      *
      * @see org.json.simple.Json2T
      *
-     * @since 1.0.5.1
+     * @since 2.0.0.0
      */
     public long toLong() {
         try {
@@ -676,15 +635,11 @@ public class Json2T implements Comparable<Json2T> {
     /**
      * Lấy số thực
      *
-     * @param
-     *
      * @return Trả về số thực
-     *
-     * @throws
      *
      * @see org.json.simple.Json2T
      *
-     * @since 1.0.5.1
+     * @since 2.0.0.0
      */
     public double toDouble() {
         try {
@@ -697,15 +652,11 @@ public class Json2T implements Comparable<Json2T> {
     /**
      * Lấy số thực
      *
-     * @param
-     *
      * @return Trả về số thực
-     *
-     * @throws
      *
      * @see org.json.simple.Json2T
      *
-     * @since 1.0.5.1
+     * @since 2.0.0.0
      */
     public float toFloat() {
         try {
@@ -718,15 +669,11 @@ public class Json2T implements Comparable<Json2T> {
     /**
      * Lấy dộ dài của mảng
      *
-     * @param
-     *
      * @return Trả về độ dài của mảng
-     *
-     * @throws
      *
      * @see org.json.simple.Json2T
      *
-     * @since 1.0.5.1
+     * @since 2.0.0.0
      */
     //
     public int length() {
@@ -739,6 +686,9 @@ public class Json2T implements Comparable<Json2T> {
     public int compareTo(Json2T json2T) {
         if (this.obj == null) {
             return -1;
+        }
+        if (json2T == null) {
+            return 1;
         }
         String oThis = this.toString();
         String oThat = json2T.toString();
@@ -766,20 +716,20 @@ public class Json2T implements Comparable<Json2T> {
 
     //
     private static JSONObject toJsonObject(Object object) {
-        return isInstanceOfJsonObject(object) ? (JSONObject) object : null;
+        return isInstanceOfJsonObject(object) ? (JSONObject) JSONValue.parse(object.toString()) : null;
     }
 
     private static JSONArray toJsonArray(Object object) {
-        return isInstanceOfJsonArray(object) ? (JSONArray) object : null;
+        return isInstanceOfJsonArray(object) ? (JSONArray) JSONValue.parse(object.toString()) : null;
     }
 
     //
     private static boolean isInstanceOfJsonObject(Object object) {
-        return object == null ? false : object instanceof JSONObject;
+        return object == null ? false : object instanceof JSONObject || object instanceof Json2T;
     }
 
     private static boolean isInstanceOfJsonArray(Object object) {
-        return object == null ? false : object instanceof JSONArray;
+        return object == null ? false : object instanceof JSONArray || object instanceof Json2T;
     }
 
     //
