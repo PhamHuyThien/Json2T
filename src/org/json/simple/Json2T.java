@@ -159,7 +159,7 @@ public class Json2T implements Comparable<Json2T> {
      * @param objs mảng object chứa giá trị cần tạo mảng.
      *
      * @return Trả về đối tượng JSONArray
-     * 
+     *
      * @see org.json.simple.Json2T
      *
      * @since 2.0.0.0
@@ -169,6 +169,7 @@ public class Json2T implements Comparable<Json2T> {
         ja.addAll(Arrays.asList(objs));
         return new Json2T(ja);
     }
+
     /**
      * tạo mảng {} chứa key: value. Lưu ý cần chú ý số lượng của phần tử mảng
      * đầu vào phải chia hết cho 2 (đảm bảo đủ key và value)
@@ -176,7 +177,7 @@ public class Json2T implements Comparable<Json2T> {
      * @param pair mảng object chứa giá trị cần tạo mảng.
      *
      * @return Trả về đối tượng JSONObject
-     * 
+     *
      * @see org.json.simple.Json2T
      *
      * @since 2.0.0.0
@@ -194,9 +195,9 @@ public class Json2T implements Comparable<Json2T> {
 
     /**
      * Lấy số nhỏ nhất trong mảng.
-     * 
-     *@return Trả về đối tượng Json2T
-     * 
+     *
+     * @return Trả về đối tượng Json2T
+     *
      * @see org.json.simple.Json2T
      *
      * @since 2.0.0.0
@@ -212,9 +213,9 @@ public class Json2T implements Comparable<Json2T> {
 
     /**
      * Lấy số lớn nhất trong mảng.
-     * 
-     *@return Trả về đối tượng Json2T
-     * 
+     *
+     * @return Trả về đối tượng Json2T
+     *
      * @see org.json.simple.Json2T
      *
      * @since 2.0.0.0
@@ -542,6 +543,32 @@ public class Json2T implements Comparable<Json2T> {
     }
 
     /**
+     * Lấy mảng boolean trong một node.
+     *
+     * @return Trả về mảng boolean trong node
+     *
+     * @see org.json.simple.Json2T
+     *
+     * @since 2.0.0.0
+     */
+    public boolean[] toBooleans() {
+        JSONArray jsonArray = toJsonArray(this.obj);
+        if (jsonArray == null) {
+            return null;
+        }
+        boolean[] booleans = new boolean[jsonArray.size()];
+        for (int i = 0; i < jsonArray.size(); i++) {
+            boolean bool = false;
+            try {
+                bool = Boolean.parseBoolean(jsonArray.get(i).toString());
+            } catch (Exception e) {
+            }
+            booleans[i] = bool;
+        }
+        return booleans;
+    }
+
+    /**
      * Lấy đối tượng
      *
      * @return Trả về object
@@ -663,6 +690,22 @@ public class Json2T implements Comparable<Json2T> {
             return Float.parseFloat(this.obj.toString());
         } catch (NumberFormatException | NullPointerException e) {
             return 0;
+        }
+    }
+    /**
+     * Lấy boolean
+     *
+     * @return Trả về kiểu boolean
+     *
+     * @see org.json.simple.Json2T
+     *
+     * @since 2.0.0.0
+     */
+    public boolean toBoolean() {
+        try {
+            return Boolean.parseBoolean(this.obj.toString());
+        } catch (NumberFormatException | NullPointerException eS) {
+            return false;
         }
     }
 
