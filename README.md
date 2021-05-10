@@ -1,113 +1,216 @@
-# Json2T - Đọc json nhanh như người yêu cũ trở mặt!
-
-## Cấu trúc:
-
-### Constructor
-- `(String json): void` -> json là chuỗi json cần parse
-- `(Object object): void` -> object được parse từ `JSONValue.parse(String json): Object`
-
-### Method
-
-#### Static Method:
-- `parse(String json): Json2T` -> json là chuỗi json cần parse
-- `parse(Object object): Json2T` -> object được parse từ `JSONValue.parse(String json): Object`
-- `cre(): Json2T` -> khởi tạo 1 object null, chuẩn bị để tạo array(`[]`) hoặc object(`{}`)
-
-#### Callback:
-- `k(String key): Json2T` -> key là key muốn get value trong json
-- `i(int index): Json2T` -> vị trí muốn lấy trong 1 mảng
-- `q(String query): Json2T` -> query là chuỗi truy cập object như javascript (query="" tương đương this)
-- `min(): Json2T` -> lấy giá trị nhỏ nhất trong mảng (ép về `giá trị`)
-- `max(): Json2T` -> lấy giá trị lớn nhất trong mảng (ép về `giá trị`)
-- `sort(): Json2T` -> sắp xếp lại mảng theo giá trị tăng dần (ép về `mảng giá trị`)
-- `reverse(): Json2T` -> trả về mảng số đảo ngược (ép về `mảng giá trị`)
-- `sum(): Json2T` -> trả về tổng các phần tử trong mảng (ép về `giá trị`)
-- `avg(): Json2T` -> trả về trung bình cộng các phần tử trong mảng (ép về `giá trị`)
-- `putObj(Object... objs): Json2T` -> thêm danh sách key:value (length%2==0)
-- `putArr(Object... objs): Json2T` -> thêm danh sách giá trị vào mảng
-
-#### Lấy giá trị:
-- `toObj(): Object` -> lấy object giá trị
-- `toStr(): String` -> trả về chuỗi giá trị
-- `toChar(): char` -> trả về kiểu kí tự (có lỗi sảy ra trả về (`0`))
-- `toInt(): int` -> trả về giá trị kiểu int (không thể ép kiểu trả về 0)
-- `toLong(): long` -> trả về giá trị kiểu long (không thể ép kiểu trả về 0)
-- `toDouble(): double` -> trả về giá trị kiểu double (không thể ép kiểu trả về 0)
-- `toFloat(): float` -> trả về giá trị kiểu float (không thể ép kiểu trả về 0)
-- `length(): int` -> lấy độ dài của mảng, trả về -1 nếu là Object hoặc Null
-
-#### Lấy mảng giá trị:
-- `toPairObjs(): Json2T[][]` -> trả về mảng 2 chiều trong đó `[i][0]` lày key, và `[i][1]` là value
-- `toKeys(): String[]` -> lấy mảng key trong json (tương đương `[i][0]` trong `toPairObjs():Json2T[][]` nhưng là chuỗi)
-- `toValues(): Json2T[]` -> lấy mảng value trong json (tương đương `[i][1]` trong `toPairObjs():Json2T[][]`)
-- `toObjs(): Json2T[]` -> trả về mảng đối tượng Json2T
-- `toStrs(): String[]` -> trả về mảng chuỗi 
-- `toChars(): char[]` -> trả về mảng kí tự (có lỗi sảy ra trả về (`'0'`))
-- `toInts(): int[]` -> trả về mảng int (không thể ép kiểu trả về 0)
-- `toLongs(): long[]` -> trả về mảng long (không thể ép kiểu trả về 0)
-- `toDoubles(): double[]` -> trả về mảng double (không thể ép kiểu trả về 0)
-- `toFloats(): float[]` -> trả về mảng float (không thể ép kiểu trả về 0)
-
-
+# JJson - Đọc json nhanh như người yêu cũ trở mặt!
+Việc sử dụng thư viện json-simple vẫn còn rất khó khăn với những người mới.  
+JJson được sinh ra đời để việc đọc và ghi json trở lên đơn giản hơn bao giờ hết.  
 ## Hướng dẫn:
-- đọc JSON vui lòng xem `ExampleJson2T.java` trong src
-- tạo JSON vui lòng xem `ExampleBuildJson2T.java` trong src
+### Đọc Json
+cho đoạn json như sau: 
+```json
+{
+   "firstName":"Thien",
+   "lastName":"Pham",
+   "address":{
+      "streetAddress":"Phu Ung",
+      "district":"An Thi",
+      "city":"Hung Yen",
+      "state":"",
+      "postalCode":"56789"
+   },
+   "age":20,
+   "phoneNumbers":[
+      {
+         "type":"home",
+         "number":"0941661235"
+      },
+      {
+         "type":"fax",
+         "number":"0435508028"
+      }
+   ],
+   "girlFriend":{
+      "name":"Thom",
+      "age":18
+   },
+   "interests":[
+      "code",
+      "watch movie",
+      "nice number"
+   ],
+   "favoriteNumbers":[
+       11,
+        7,
+        2000,
+        08,
+        09,
+        2002
+   ],
+   "sex":"Male",
+   "salary":1200.0
+}
+```
+#### cách thực hiện:
+```java
+JJson jjson = JJson.parse(json); //trong đó json là chuỗi json trên
+String firstName = jjson.q(".firstName").toStr();
+// or jjson.k("firstName").toStr();
+String city = jjson.q(".address.city").toStr();
+// or jjson.k("firstName").k("city").toStr();
+int postalCode = jjson.q(".address.postalCode").toInt();
+// or jjson.k("firstName").k("city").toInt();
+double salary = jjson.q(".salary").toDouble();
+int index2Interest = jjson.q(".interests[2]").toStrs();
+int index4FavoriteNumbers = jjson.q(".favoriteNumbers[4]").toInts();
+// or index4FavoriteNumbers = jjson.k("favoriteNumbers").i(4).toInts();
+String index1NumberPhoneNumber = jjson.q(".phoneNumbers[0].number").toStr();
+String[] interests = jjson.q(".interests").toStrs();
+int[] favoriteNumbers = jjson.q(".favoriteNumbers").toInts();
+//sắp xếp mảng chuỗi
+interests = jjson.q(".interests").sort().toStrs();
+//sắp xếp mảng số giảm dần
+favoriteNumbers = jjson.q(".favoriteNumbers").sort().reverse().toInts();
+//số lớn nhất, nhỏ nhất, trung bình cộng
+int max = jjson.q(".favoriteNumbers").max().toInts();
+int min = jjson.q(".favoriteNumbers").min().toInts();
+int avg = jjson.q(".favoriteNumbers").avg().toInt();
+```
+### Tạo json:
+```java
+//tạo json nhanh
+JJson jjson = JJson.cre().obj(
+    "firstName", "Thien",
+    "lastName", "Pham",
+    "phoneNumbers", JJson.cre().arr(
+        JJson.cre().obj(
+            "type", "home",
+            "number", "0941661235"
+        ),
+        JJson.cre().obj(
+             "type", "fax",
+                "number", "0435508028"
+         )
+    ),
+    "girlFriend", JJson.cre().obj(
+        "name", "Thom",
+        "age", 18
+    ),
+    "age", 20,
+    "sex", "male",
+    "salary", 1200.0
+);
+System.out.println(jjson);
+//tạo json theo kiểu sử dụng put Map hoặc List
+Map<Object, Object> m1Phone = new HashMap<>();
+m1Phone.put("type", "home");
+m1Phone.put("number", "0941661235");
+Map<Object, Object> m2Phone = new HashMap<>();
+m2Phone.put("type", "fax");
+m2Phone.put("number", "0435508028");
+
+List<Object> lphone = new ArrayList<>();
+lphone.add(m1Phone);
+lphone.add(m2Phone);
+
+Map<Object, Object> mGirlFriend = new HashMap<>();
+mGirlFriend.put("name", "Thom");
+mGirlFriend.put("age", 18);
+
+Map<Object, Object> mJson = new HashMap<>();
+mJson.put("firstName", "Thien");
+mJson.put("lastName", "Pham");
+mJson.put("phoneNumbers", lphone);
+mJson.put("girlFriend", mGirlFriend);
+mJson.put("age", 20);
+mJson.put("sex", "male");
+mJson.put("salary", 1200.1);
+
+JJson jjson = JJson.cre().put(mJson);
+System.out.println(jjson);
+```
 
 ## Lưu ý:
-- tốc độ code và đọc dữ liệu thì callback `q` nhanh hơn dùng callback `k` và `i`
-- nếu lấy giá trị ở xa hãy dùng callback `q`, ngược lại dùng callback `k` và `i`
 - không tìm thấy key hoặc index sẽ trả về Null
 - bất cứ lỗi nào sảy ra sẽ trả về Null
 
+## Cấu trúc:
+|Type|Function|
+|--------|---------|
+|`static`|`parse(String json):JJson`|
+|`static`|`parse(Object object):JJson`|
+|`static`|`cre():JJson`|
+|``constructor`|`(String json):JJson`
+|``constructor`|`(Object object):JJson`
+||`obj(Object... objs):JJson`|
+||`arr(Object... objs):JJson`|
+||`put(Map<Object, Object> map):JJson`|
+||`put(List<Object> list):JJson`|
+||`k(String key):JJson`|
+||`i(int index):JJson`|
+||`q(String query):JJson`|
+||`min():JJson`|
+||`max():JJson`|
+||`sort():JJson`|
+||`reverse():JJson`|
+||`sum():JJson`|
+||`avg():JJson`|
+||`toObj():Object`|
+||`toStr():String`|
+||`toChar():char`|
+||`toInt():int`|
+||`toLong():long`|
+||`toDouble():double`|
+||`toFloat():float`|
+||`toBolean():boolean`|
+||`length():int`|
+||`toPairObjs():JJson[][]`|
+||`toKeys():String[]`|
+||`toValues():JJson[]`|
+||`toObjs():JJson[]`|
+||`toStrs():String[]`|
+||`toChars():char[]`|
+||`toInts():int[]`|
+||`toLongs():long[]`|
+||`toDoubles():double[]`|
+||`toFloats():float[]`|
+||`toBooleans():boolean[]`|
+
 ## Cập nhật:
-#### v2.0.0
-- thêm `cre():Json2T` để tạo mảng json (kết hợp `putObj` hoặc `putArr` để tạo) 
-- thêm `putObj(Object... objs): Json2T` tạo mảng object list `{a: 1, b: 2, ...}`
-- thêm `putArr(Object... objs): Json2T` tạo mảng giá trị `[1, 2, 3,...]`
-#### v1.0.6
-- fix `sort():Json2T` sắp sếp được cả chuỗi, và số (có lỗi trả về mảng 0)
-- fix `reverse():Json2T` đảo được cả mảng chuỗi và số (có lỗi trả về mảng 0)
-- update lại có lỗi sảy ra trả về 0 thay vì -1 hoặc `'_'`
-- update lại `toString():String` tương đương `toStr():String`
-- add note vào các hàm (sử dụng tốt trên netbean)
-
-#### v1.0.5
-- thêm hàm `avg(): Json2T` trả về trung bình cộng một mảng (cần ép về giá trị gì thì dùng các hàm `Lấy giá trị` ở trên)
-- thêm hàm `sum(): Json2T` trả về tổng một mảng (cần ép về giá trị gì thì dùng các hàm `Lấy giá trị` ở trên)
-- thêm hàm `min():Json2T` lấy số nhỏ nhất trong mảng (cần ép về giá trị gì thì dùng các hàm `Lấy giá trị` ở trên)
-- thêm hàm `max():Json2T` lấy số lớn nhất trong mảng (cần ép về giá trị gì thì dùng các hàm `Lấy giá trị` ở trên)
-- thêm hàm `reverse():Json2T` đảo ngược mảng số (cần ép về giá trị gì thì dùng các hàm `Lấy mảng giá trị` ở trên)
-- sửa lỗi không thể đẩy chuỗi số thực về số nguyên (fix toInt(), toLong(), toInts(), toLongs())
-
-#### v1.0.4
-- thêm các hàm lấy giá trị (`toChar():char`, `toLong():long`, `toFloat():float`)
-- thêm các hàm lấy mảng giá trị (`toChars():char[]`, `toLongs():long[]`, `toFloats():float[]`)
-- thêm hàm `toKeys():String[]` lấy tất cả key trong json
-- thêm hàm `toValues():Json2T[]` lấy tất cả value trong json
-
-#### v1.0.3.1
-- fix lại function `q(String query):Json2T` đọc json có mảng đầu tiên không lỗi
-
-#### v1.0.3
-- thêm function `q(String query):Json2T` => đọc json nhanh hơn người yêu cũ trở mặt
-- đổi function `key(String key):Json2T` => `k(String key):Json2T`
-- đổi function `index(String index): Json2T` => `i(String index):Json2T`
-
-#### v1.0.2
-- bỏ variable `length:int` thay bằng function `length():int`
-- bỏ `toJsonStr(): String` (sử dụng `toStr():String` hoặc `toString():String` thay thế)
-- cập nhật lại source
-
-#### v1.0.1
-- thêm biến `length: int` để kiểm tra độ dài mảng
-- fix lại 1 số hàm cho gọn nhẹ
-
-#### v1.0.0
-- ra mắt `Json2T.java`
+|Version|Changed|
+|-------|-------|
+|**2.0.1**|đổi `putObj(Object... objs):JJson` thành `obj(Object... objs):JJson`|
+||đổi `putArr(Object... objs):JJson` thành `arr(Object... objs):JJson`|
+||thêm `put(Map<Object, Object>)::JJson` 
+||thêm `put(List<Object>)::JJson` |
+|**2.0.0**|thêm `cre():JJson` để tạo mảng json (kết hợp `putObj` hoặc `putArr` để tạo) 
+||thêm `putObj(Object... objs):JJson` tạo mảng object list `{a:1, b:2, ...}`
+||thêm `putArr(Object... objs):JJson` tạo mảng giá trị `[1, 2, 3,...]`
+|**1.0.6**|fix `sort():JJson` sắp sếp được cả chuỗi, và số (có lỗi trả về mảng 0)|
+||fix `reverse():JJson` đảo được cả mảng chuỗi và số (có lỗi trả về mảng 0)|
+||update lại có lỗi sảy ra trả về 0 thay vì -1 hoặc `'_'`|
+||update lại `toString():String` tương đương `toStr():String`|
+||add note vào các hàm (sử dụng tốt trên netbean)|
+|**1.0.5**|thêm hàm `avg():JJson` trả về trung bình cộng một mảng (cần ép về giá trị gì thì dùng các hàm `Lấy giá trị` ở trên)|
+||thêm hàm `sum():JJson` trả về tổng một mảng (cần ép về giá trị gì thì dùng các hàm `Lấy giá trị` ở trên)|
+||thêm hàm `min():JJson` lấy số nhỏ nhất trong mảng (cần ép về giá trị gì thì dùng các hàm `Lấy giá trị` ở trên)|
+||thêm hàm `max():JJson` lấy số lớn nhất trong mảng (cần ép về giá trị gì thì dùng các hàm `Lấy giá trị` ở trên)|
+||thêm hàm `reverse():JJson` đảo ngược mảng số (cần ép về giá trị gì thì dùng các hàm `Lấy mảng giá trị` ở trên)|
+||sửa lỗi không thể đẩy chuỗi số thực về số nguyên (fix toInt(), toLong(), toInts(), toLongs())|
+|**1.0.4**|thêm các hàm lấy giá trị (`toChar():char`, `toLong():long`, `toFloat():float`)|
+||thêm các hàm lấy mảng giá trị (`toChars():char[]`, `toLongs():long[]`, `toFloats():float[]`)|
+||thêm hàm `toKeys():String[]` lấy tất cả key trong json|
+||thêm hàm `toValues():JJson[]` lấy tất cả value trong json|
+|**1.0.3.1**|fix lại function `q(String query):JJson` đọc json có mảng đầu tiên không lỗi|
+|**1.0.3**|thêm function `q(String query):JJson` => đọc json nhanh hơn người yêu cũ trở mặt|
+||đổi function `key(String key):JJson` => `k(String key):JJson`|
+||đổi function `index(String index):JJson` => `i(String index):JJson`|
+|**1.0.2**|bỏ variable `length:int` thay bằng function `length():int`|
+||bỏ `toJsonStr():String` (sử dụng `toStr():String` hoặc `toString():String` thay thế)|
+||cập nhật lại source|
+|**1.0.1**|thêm biến `length:int` để kiểm tra độ dài mảng|
+||fix lại 1 số hàm cho gọn nhẹ|
+|**1.0.0**|Ra mắt `JJson.java`
 
 ## Thông tin:
-- Tên: Json2T
-- Tác giả: Thiên Đẹp Zaii ( SystemError )
-- Phiên bản: 1.0.6
-- Thư viện sử dụng: JSON SIMPLE
-- Phiên bản thư viện: 1.1.1
+- Tên:JJson
+- Tác giả:Thiên Đẹp Zaii ( SystemError )
+- Phiên bản:1.0.6
+- Thư viện sử dụng:JSON SIMPLE
+- Phiên bản thư viện:1.1.1
